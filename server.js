@@ -1,0 +1,51 @@
+const express = require('express');
+const http = require('http');
+const WebSocket = require('ws');
+const path = require('path');
+
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+let drawnNumbers = [];
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+
+app.post('/number', (req, res) => {
+  const { number } = req.body;
+  if (typeof number !== 'number' || number < 1 || number > 75) {
+    return res.status(400).json({ error: 'Número inválido' });
+  }
+  if (!drawnNumbers.includes(number)) {
+    drawnNumbers.push(number);
+    broadcast({ type: 'update', numbers: drawnNumbers });
+  }
+  res.sendStatus(200);
+});
+
+app.post('/reset', (req, res) => {
+  drawnNumbers = [];
+  broadcast({ type: 'update', numbers: drawnNumbers });
+  res.sendStatus(200);
+});
+
+wss.on('connection', (ws) => {
+  ws.send(JSON.stringify({ type: 'update', numbers: drawnNumbers }));
+});
+
+function broadcast(data) {
+  const msg = JSON.stringify(data);
+  wss.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(msg);
+    }
+  });
+}
+
+const PORT = 3000;
+const HOST = '0.0.0.0'; // Esto lo hace accesible desde tu IP local
+
+server.listen(PORT, HOST, () => {
+  console.log(`Servidor corriendo en http://<TU_IP_LOCAL>:${PORT}`);
+});

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bingo - Overlay Horizontal</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #header {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 10px;
+    }
+
+    .letter {
+      font-size: 48px;
+      font-weight: bold;
+      color: #444;
+      transition: color 0.3s;
+    }
+
+    .active {
+      color: #00ffcc;
+    }
+
+    #last-numbers {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .last-number {
+      background-color: #00ffcc;
+      color: #000;
+      border-radius: 10px;
+      padding: 10px;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 28px;
+    }
+
+        #bingo-grid {
+      display: grid;
+      grid-template-columns: repeat(16, 40px);
+      grid-gap: 5px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-size: 18px;
+    }
+    .letter-cell {
+        font-weight: bold;
+        background-color: transparent;
+        color: #00ffcc;
+    }
+
+    .marked {
+      background-color: #ff4444;
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="header">
+    <div class="letter" id="b-letter">B</div>
+    <div class="letter" id="i-letter">I</div>
+    <div class="letter" id="n-letter">N</div>
+    <div class="letter" id="g-letter">G</div>
+    <div class="letter" id="o-letter">O</div>
+  </div>
+
+  <div id="last-numbers"></div>
+
+  <div id="bingo-grid"></div>
+
+  <script>
+    const gridContainer = document.getElementById("bingo-grid");
+    const drawnNumbers = [];
+
+    
+
+    const ws = new WebSocket(`ws://${location.host}`);
+    ws.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      if (msg.type === 'update') {
+        drawnNumbers.length = 0;
+        msg.numbers.forEach(n => drawnNumbers.push(n));
+        updateUI();
+      }
+    };
+
+    function updateUI() {
+      // Actualizar letras BINGO
+      const hasB = drawnNumbers.some(n => n >= 1 && n <= 15);
+      const hasI = drawnNumbers.some(n => n >= 16 && n <= 30);
+      const hasN = drawnNumbers.some(n => n >= 31 && n <= 45);
+      const hasG = drawnNumbers.some(n => n >= 46 && n <= 60);
+      const hasO = drawnNumbers.some(n => n >= 61 && n <= 75);
+
+      document.getElementById("b-letter").classList.toggle("active", hasB);
+      document.getElementById("i-letter").classList.toggle("active", hasI);
+      document.getElementById("n-letter").classList.toggle("active", hasN);
+      document.getElementById("g-letter").classList.toggle("active", hasG);
+      document.getElementById("o-letter").classList.toggle("active", hasO);
+
+      // Últimos 5 números
+      const lastNumbersDiv = document.getElementById("last-numbers");
+      lastNumbersDiv.innerHTML = '';
+      drawnNumbers.slice(-5).reverse().forEach(num => {
+        const div = document.createElement("div");
+        div.className = "last-number";
+        div.textContent = num;
+        lastNumbersDiv.appendChild(div);
+      });
+        // Grilla con letras y números
+        gridContainer.innerHTML = '';
+        const ranges = [
+            { label: 'B', start: 1 },
+            { label: 'I', start: 16 },
+            { label: 'N', start: 31 },
+            { label: 'G', start: 46 },
+            { label: 'O', start: 61 },
+        ];
+        for (const { label, start } of ranges) {
+        // Agrega letra vertical
+        const letterCell = document.createElement("div");
+        letterCell.className = "cell letter-cell";
+        letterCell.textContent = label;
+        gridContainer.appendChild(letterCell);
+
+            // Agrega los 15 números de esa sección
+            for (let i = start; i < start + 15; i++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            if (drawnNumbers.includes(i)) cell.classList.add("marked");
+            cell.textContent = i;
+            gridContainer.appendChild(cell);
+            }
+        }
+    //   // Grilla
+    //   gridContainer.innerHTML = '';
+    //   for (let i = 1; i <= 75; i++) {
+    //     const cell = document.createElement("div");
+    //     cell.className = "cell";
+    //     if (drawnNumbers.includes(i)) cell.classList.add("marked");
+    //     cell.textContent = i;
+    //     gridContainer.appendChild(cell);
+    //   }
+    }
+  </script>
+
+</body>
+</html>

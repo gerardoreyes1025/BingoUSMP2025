@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bingo - Overlay</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      /* width: 300px;
+      overflow: hidden; */
+    }
+
+    #last-numbers {
+      font-size: 60px;
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .last-number {
+      background-color: #00ffcc;
+      color: #000;
+      border-radius: 10px;
+      padding: 20px;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    #bingo-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 40px);
+      grid-gap: 5px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-size: 18px;
+    }
+
+    .marked {
+      background-color: #ff4444;
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+<body>
+  <div id="last-numbers"></div>
+  <div id="bingo-grid"></div>
+
+  <script>
+    const gridContainer = document.getElementById("bingo-grid");
+    const lastNumbersDiv = document.getElementById("last-numbers");
+    const drawnNumbers = [];
+
+    const ws = new WebSocket(`ws://${location.host}`);
+
+    ws.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      if (msg.type === 'update') {
+        drawnNumbers.length = 0;
+        msg.numbers.forEach(n => drawnNumbers.push(n));
+        updateUI();
+      }
+    };
+
+    function updateUI() {
+      // Últimos 5
+      lastNumbersDiv.innerHTML = '';
+      drawnNumbers.slice(-3).reverse().forEach(num => {
+        const div = document.createElement("div");
+        div.className = "last-number";
+        div.textContent = num;
+        lastNumbersDiv.appendChild(div);
+      });
+
+      // Grilla
+      gridContainer.innerHTML = '';
+      for (let i = 1; i <= 75; i++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        if (drawnNumbers.includes(i)) cell.classList.add("marked");
+        cell.textContent = i;
+        gridContainer.appendChild(cell);
+      }
+    }
+  </script>
+</body>
+</html>

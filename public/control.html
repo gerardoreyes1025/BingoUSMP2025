@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bingo - Control</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #bingo-grid {
+      display: grid;
+      grid-template-columns: repeat(15, 40px);
+      grid-gap: 5px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-size: 18px;
+      position: relative;
+    }
+
+    .marked {
+      background-color: #ff4444;
+      text-decoration: line-through;
+    }
+
+    .remove-btn {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    #input-area {
+      margin: 20px;
+    }
+
+    #number-input {
+      font-size: 24px;
+      width: 80px;
+      text-align: center;
+    }
+
+    #add-btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #00ffcc;
+      border: none;
+      border-radius: 5px;
+      color: #000;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    #reset-btn {
+      margin-top: 25px;
+      font-size: 25px;
+      padding: 8px 15px;
+      background-color: red;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #undo-btn {
+      margin-top: 20px;
+      font-size: 20px;
+      padding: 8px 15px;
+      background-color: orangered;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+
+  </style>
+</head>
+<body>
+  <h1>Control de Bingo</h1>
+
+  <div id="input-area">
+    <input type="number" id="number-input" min="1" max="75" />
+    <button id="add-btn">Agregar</button>
+    <button id="undo-btn">Deshacer último</button>
+    <br>
+    
+    
+
+  </div>
+
+  <div id="bingo-grid"></div>
+<button id="reset-btn">Resetear</button>
+  <script>
+    const input = document.getElementById("number-input");
+    const addBtn = document.getElementById("add-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const gridContainer = document.getElementById("bingo-grid");
+    const drawnNumbers = new Set();
+    const ws = new WebSocket(`ws://${location.host}`);
+
+    ws.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      if (msg.type === 'update') {
+        drawnNumbers.clear();
+        msg.numbers.forEach(n => drawnNumbers.add(n));
+        updateUI();
+      }
+    };
+
+    function updateUI() {
+      gridContainer.innerHTML = '';
+      for (let i = 1; i <= 75; i++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = i;
+
+        if (drawnNumbers.has(i)) {
+          cell.classList.add("marked");
+
+          // Botón de eliminar
+          const btn = document.createElement("button");
+          btn.className = "remove-btn";
+          btn.textContent = "×";
+          btn.title = "Eliminar";
+          btn.onclick = () => {
+            if (confirm(`¿Eliminar el número ${i}?`)) {
+              removeNumber(i);
+            }
+          };
+          cell.appendChild(btn);
+        }
+
+        gridContainer.appendChild(cell);
+      }
+    }
+
+    function addNumber() {
+      const value = parseInt(input.value);
+      if (isNaN(value) || value < 1 || value > 75 || drawnNumbers.has(value)) {
+        alert("Número inválido o ya sorteado");
+        return;
+      }
+      fetch('/number', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ number: value })
+      });
+      input.value = '';
+    }
+
+    function resetBingo() {
+      if (confirm("¿Seguro que querés reiniciar el bingo?")) {
+        fetch('/reset', { method: 'POST' });
+      }
+    }
+
+    function removeNumber(n) {
+      // Eliminamos localmente y reenviamos toda la lista al servidor
+      drawnNumbers.delete(n);
+      const updated = Array.from(drawnNumbers);
+      fetch('/reset', { method: 'POST' }).then(() => {
+        updated.forEach(num => {
+          fetch('/number', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ number: num })
+          });
+        });
+      });
+    }
+
+    const undoBtn = document.getElementById("undo-btn");
+
+    function undoLastNumber() {
+    if (drawnNumbers.size === 0) {
+        alert("No hay números para deshacer.");
+        return;
+    }
+
+    const updated = Array.from(drawnNumbers);
+    const last = updated.pop(); // Quita el último
+
+    if (!confirm(`¿Deshacer el número ${last}?`)) return;
+
+    // Reset y volver a agregar todos menos el último
+    fetch('/reset', { method: 'POST' }).then(() => {
+        updated.forEach(num => {
+        fetch('/number', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ number: num })
+        });
+        });
+    });
+    }
+
+    undoBtn.addEventListener("click", undoLastNumber);
+
+
+    addBtn.addEventListener("click", addNumber);
+    resetBtn.addEventListener("click", resetBingo);
+  </script>
+</body>
+</html>
