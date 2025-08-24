@@ -14,8 +14,8 @@ Este es un sistema interactivo de **Bingo en vivo** diseñado para transmisiones
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/bingo-stream.git
-cd bingo-stream
+git clone https://github.com/gerardoreyes1025/BingoUSMP2025.git
+cd Bingo
 
 ### 2. Instalar dependencias (solo express y ws)
 npm install
