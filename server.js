@@ -24,6 +24,18 @@ app.post('/number', (req, res) => {
   res.sendStatus(200);
 });
 
+app.post('/special', (req, res) => {
+  const { letter } = req.body;
+  // console.log("Letra especial recibida:", letter);
+  if (typeof letter !== 'string' || !['L', 'U', 'APAGÓN'].includes(letter)) {
+    return res.status(400).json({ error: 'Letra especial inválida' });
+  }
+  broadcast({ type: 'special', letter });
+  res.sendStatus(200);
+});
+
+
+
 app.post('/reset', (req, res) => {
   drawnNumbers = [];
   broadcast({ type: 'update', numbers: drawnNumbers });

@@ -95,6 +95,16 @@
       cursor: pointer;
     }
 
+    .btnaccion{
+      margin-top: 25px;
+      font-size: 25px;
+      padding: 8px 15px;
+      background-color: skyblue;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
   </style>
 </head>
@@ -107,12 +117,17 @@
     <button id="undo-btn">Deshacer último</button>
     <br>
     
-    
 
   </div>
 
   <div id="bingo-grid"></div>
 <button id="reset-btn">Resetear</button>
+</br>
+
+    <button id="btn-l" class="btnaccion" disabled>Animar L</button>
+<button id="btn-u" class="btnaccion" disabled>Animar U</button>
+<button id="btn-apagon" class="btnaccion" disabled>Animar Apagón</button>
+
   <script>
     const input = document.getElementById("number-input");
     const addBtn = document.getElementById("add-btn");
@@ -129,6 +144,27 @@
         updateUI();
       }
     };
+
+    ws.onopen = () => {
+      document.getElementById("btn-l").disabled = false;
+      document.getElementById("btn-u").disabled = false;
+      document.getElementById("btn-apagon").disabled = false;
+    };
+    document.getElementById("btn-l").onclick = () => sendSpecial('L');
+document.getElementById("btn-u").onclick = () => sendSpecial('U');
+document.getElementById("btn-apagon").onclick = () => sendSpecial('APAGÓN');
+
+function sendSpecial(letter) {
+  if (ws.readyState === 1) { // 1 = OPEN
+      fetch('/special', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ letter: letter })
+      });
+  } else {
+    alert("WebSocket no está conectado.");
+  }
+}
 
     function updateUI() {
       gridContainer.innerHTML = '';

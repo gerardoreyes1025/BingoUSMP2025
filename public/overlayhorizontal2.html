@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bingo - Overlay Horizontal</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #main-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      margin-top: 30px;
+    }
+
+    #letters-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-right: 30px;
+      gap: 18px;
+    }
+
+    .side-letter {
+      font-size: 20px;
+      font-weight: bold;
+      transition: color 0.3s;
+      letter-spacing: 2px;
+      line-height: 1;
+      margin: -5px;
+      background-color: #00ffcc;
+      color: gray;
+      border-radius: 10px;
+      padding: 10px;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      
+    }
+
+    .side-letter.active {
+      color: black;
+      text-shadow: 0 0 20px #00ffcc, 0 0 40px #fff;
+    }
+
+    #bingo-grid {
+      display: grid;
+      grid-template-columns: repeat(15, 40px);
+      grid-gap: 5px;
+      justify-content: center;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-size: 18px;
+    }
+
+    .marked {
+      background-color: #ff4444;
+      text-decoration: line-through;
+    }
+
+    /* Animación para letras especiales */
+    #special-letter {
+      position: fixed;
+      top: 15%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 180px;
+      font-weight: bold;
+      color: #00ffcc;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1000;
+      transition: opacity 0.4s;
+      text-shadow: 0 0 40px #00ffcc, 0 0 80px #fff;
+    }
+    #special-letter.show {
+      opacity: 1;
+      animation: pop 1s cubic-bezier(.2,2,.4,1) 1;
+    }
+    @keyframes pop {
+      0% { transform: translate(-50%, -50%) scale(0.7);}
+      60% { transform: translate(-50%, -50%) scale(1.2);}
+      100% { transform: translate(-50%, -50%) scale(1);}
+    }
+    #special-letter.apagon {
+      color: #fff;
+      /* background: #111; */
+      border-radius: 30px;
+      font-size: 120px;
+      padding: 40px 80px;
+      /* box-shadow: 0 0 80px #000; */
+      text-shadow: 0 0 30px #fff, 0 0 60px #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="main-container">
+    <div id="letters-column">
+      <div class="side-letter" id="b-letter">B</div>
+      <div class="side-letter" id="i-letter">I</div>
+      <div class="side-letter" id="n-letter">N</div>
+      <div class="side-letter" id="g-letter">G</div>
+      <div class="side-letter" id="o-letter">O</div>
+    </div>
+    <div id="bingo-grid"></div>
+    <div id="special-letter"></div>
+  </div>
+  
+
+  <script>
+    const gridContainer = document.getElementById("bingo-grid");
+    const drawnNumbers = [];
+
+    let shownSpecials = { L: false, U: false, APAGÓN: false };
+
+    const ws = new WebSocket(`ws://${location.host}`);
+    ws.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      if (msg.type === 'update') {
+        drawnNumbers.length = 0;
+        msg.numbers.forEach(n => drawnNumbers.push(n));
+        updateUI();
+      }
+      // Permitir mostrar animación desde control
+      if (msg.type === 'special' && msg.letter) {
+        showSpecialLetter(msg.letter);
+      }
+    };
+
+    function showSpecialLetter(letter) {
+      const specialDiv = document.getElementById("special-letter");
+      let apagon = (letter === "APAGÓN");
+      specialDiv.textContent = letter;
+      specialDiv.className = "show" + (apagon ? " apagon" : "");
+      setTimeout(() => {
+        specialDiv.className = apagon ? "apagon" : "";
+        specialDiv.textContent = "";
+      }, 1800);
+    }
+
+    function updateUI() {
+      // Actualizar letras BINGO
+      const hasB = drawnNumbers.some(n => n >= 1 && n <= 15);
+      const hasI = drawnNumbers.some(n => n >= 16 && n <= 30);
+      const hasN = drawnNumbers.some(n => n >= 31 && n <= 45);
+      const hasG = drawnNumbers.some(n => n >= 46 && n <= 60);
+      const hasO = drawnNumbers.some(n => n >= 61 && n <= 75);
+
+      document.getElementById("b-letter").classList.toggle("active", hasB);
+      document.getElementById("i-letter").classList.toggle("active", hasI);
+      document.getElementById("n-letter").classList.toggle("active", hasN);
+      document.getElementById("g-letter").classList.toggle("active", hasG);
+      document.getElementById("o-letter").classList.toggle("active", hasO);
+
+      // Grilla con letras y números
+      gridContainer.innerHTML = '';
+      const ranges = [
+        { label: 'B', start: 1 },
+        { label: 'I', start: 16 },
+        { label: 'N', start: 31 },
+        { label: 'G', start: 46 },
+        { label: 'O', start: 61 },
+      ];
+      for (const { start } of ranges) {
+        for (let i = start; i < start + 15; i++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          if (drawnNumbers.includes(i)) cell.classList.add("marked");
+          cell.textContent = i;
+          gridContainer.appendChild(cell);
+        }
+      }
+
+      // Detectar condiciones especiales
+      const countB = drawnNumbers.filter(n => n >= 1 && n <= 15).length;
+      const countI = drawnNumbers.filter(n => n >= 16 && n <= 30).length;
+      const countN = drawnNumbers.filter(n => n >= 31 && n <= 45).length;
+      const countG = drawnNumbers.filter(n => n >= 46 && n <= 60).length;
+      const countO = drawnNumbers.filter(n => n >= 61 && n <= 75).length;
+
+      // L: 5B 1I 1N 1G 1O
+      if (countB >= 5 && countI >= 1 && countN >= 1 && countG >= 1 && countO >= 1 && !shownSpecials.L) {
+        showSpecialLetter("L");
+        shownSpecials.L = true;
+      }
+      // U: 5B 1I 1N 1G 5O
+      if (countB >= 5 && countI >= 1 && countN >= 1 && countG >= 1 && countO >= 5 && !shownSpecials.U) {
+        showSpecialLetter("U");
+        shownSpecials.U = true;
+      }
+      // Apagón: 5B 5I 4N 5G 5O
+      if (countB >= 5 && countI >= 5 && countN >= 4 && countG >= 5 && countO >= 5 && !shownSpecials["APAGÓN"]) {
+        showSpecialLetter("APAGÓN");
+        shownSpecials["APAGÓN"] = true;
+      }
+    }
+
+    // Inicializa la UI al cargar
+    updateUI();
+  </script>
+</body>
+</html>

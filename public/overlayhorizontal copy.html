@@ -80,42 +80,8 @@
       background-color: #ff4444;
       text-decoration: line-through;
     }
-
-    /* Animación para letras especiales */
-    #special-letter {
-      position: fixed;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 180px;
-      font-weight: bold;
-      color: #00ffcc;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 1000;
-      transition: opacity 0.4s;
-      text-shadow: 0 0 40px #00ffcc, 0 0 80px #fff;
-    }
-    #special-letter.show {
-      opacity: 1;
-      animation: pop 1s cubic-bezier(.2,2,.4,1) 1;
-    }
-    @keyframes pop {
-      0% { transform: translate(-50%, -50%) scale(0.7);}
-      60% { transform: translate(-50%, -50%) scale(1.2);}
-      100% { transform: translate(-50%, -50%) scale(1);}
-    }
-    #special-letter.apagon {
-      color: #fff;
-      background: #111;
-      border-radius: 30px;
-      padding: 40px 80px;
-      box-shadow: 0 0 80px #000;
-      text-shadow: 0 0 60px #fff, 0 0 120px #fff;
-    }
   </style>
 </head>
-
 <body>
 
   <div id="header">
@@ -129,13 +95,12 @@
   <div id="last-numbers"></div>
 
   <div id="bingo-grid"></div>
-  <div id="special-letter"></div>
 
   <script>
     const gridContainer = document.getElementById("bingo-grid");
     const drawnNumbers = [];
 
-    let shownSpecials = { L: false, U: false, APAGÓN: false };
+    
 
     const ws = new WebSocket(`ws://${location.host}`);
     ws.onmessage = (event) => {
@@ -145,22 +110,7 @@
         msg.numbers.forEach(n => drawnNumbers.push(n));
         updateUI();
       }
-      // Permitir mostrar animación desde control
-      if (msg.type === 'special' && msg.letter) {
-        showSpecialLetter(msg.letter);
-      }
     };
-
-    function showSpecialLetter(letter) {
-      const specialDiv = document.getElementById("special-letter");
-      let apagon = (letter === "APAGÓN");
-      specialDiv.textContent = letter;
-      specialDiv.className = "show" + (apagon ? " apagon" : "");
-      setTimeout(() => {
-        specialDiv.className = apagon ? "apagon" : "";
-        specialDiv.textContent = "";
-      }, 1800);
-    }
 
     function updateUI() {
       // Actualizar letras BINGO
@@ -219,30 +169,7 @@
     //     cell.textContent = i;
     //     gridContainer.appendChild(cell);
     //   }
-    // Detectar condiciones especiales
-    const countB = drawnNumbers.filter(n => n >= 1 && n <= 15).length;
-    const countI = drawnNumbers.filter(n => n >= 16 && n <= 30).length;
-    const countN = drawnNumbers.filter(n => n >= 31 && n <= 45).length;
-    const countG = drawnNumbers.filter(n => n >= 46 && n <= 60).length;
-    const countO = drawnNumbers.filter(n => n >= 61 && n <= 75).length;
-
-    // L: 5B 1I 1N 1G 1O
-    if (countB >= 5 && countI >= 1 && countN >= 1 && countG >= 1 && countO >= 1 && !shownSpecials.L) {
-      showSpecialLetter("L");
-      shownSpecials.L = true;
     }
-    // U: 5B 1I 1N 1G 5O
-    if (countB >= 5 && countI >= 1 && countN >= 1 && countG >= 1 && countO >= 5 && !shownSpecials.U) {
-      showSpecialLetter("U");
-      shownSpecials.U = true;
-    }
-    // Apagón: 5B 5I 4N 5G 5O
-    if (countB >= 5 && countI >= 5 && countN >= 4 && countG >= 5 && countO >= 5 && !shownSpecials["APAGÓN"]) {
-      showSpecialLetter("APAGÓN");
-      shownSpecials["APAGÓN"] = true;
-    }
-    // ...resto del código existente...
-  }
   </script>
 
 </body>
