@@ -24,6 +24,18 @@ app.post('/number', (req, res) => {
   res.sendStatus(200);
 });
 
+app.post('/deleteNumber', (req, res) => {
+  const { number } = req.body;
+  if (typeof number !== 'number' || number < 1 || number > 75) {
+    return res.status(400).json({ error: 'Número inválido' });
+  }
+  if (!drawnNumbers.includes(number)) {
+    drawnNumbers.push(number);
+    broadcast({ type: 'delete', numbers: drawnNumbers });
+  }
+  res.sendStatus(200);
+});
+
 app.post('/special', (req, res) => {
   const { letter } = req.body;
   // console.log("Letra especial recibida:", letter);

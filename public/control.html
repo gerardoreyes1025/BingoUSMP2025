@@ -138,10 +138,13 @@
 
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
-      if (msg.type === 'update') {
-        drawnNumbers.clear();
-        msg.numbers.forEach(n => drawnNumbers.add(n));
-        updateUI();
+      switch (msg.type) {
+        case 'update':
+        case 'delete':
+          drawnNumbers.clear();
+          msg.numbers.forEach(n => drawnNumbers.add(n));
+          updateUI();
+          break;
       }
     };
 
@@ -219,7 +222,7 @@ function sendSpecial(letter) {
       const updated = Array.from(drawnNumbers);
       fetch('/reset', { method: 'POST' }).then(() => {
         updated.forEach(num => {
-          fetch('/number', {
+          fetch('/deleteNumber', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ number: num })
