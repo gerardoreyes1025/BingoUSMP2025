@@ -19,6 +19,8 @@
       justify-content: center;
       align-items: flex-start;
       margin-top: 30px;
+
+      position: relative; /*centrar respecto a grid*/
     }
 
     #letters-column {
@@ -36,7 +38,7 @@
       letter-spacing: 2px;
       line-height: 1;
       margin: -5px;
-      background-color: #00ffcc;
+      background-color: black;
       color: gray;
       border-radius: 10px;
       padding: 10px;
@@ -50,8 +52,8 @@
     }
 
     .side-letter.active {
-      color: black;
-      text-shadow: 0 0 20px #00ffcc, 0 0 40px #fff;
+      color: white;
+      text-shadow: 0 0 20px white, 0 0 40px #fff;
     }
 
     #bingo-grid {
@@ -80,18 +82,19 @@
 
     /* Animación para letras especiales */
     #special-letter {
-      position: fixed;
-      top: 15%;
+      position: absolute; /*change to fixed*/
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 180px;
       font-weight: bold;
-      color: #00ffcc;
+      /* color: #00ffcc; */
+      color: white;
       opacity: 0;
       pointer-events: none;
       z-index: 1000;
       transition: opacity 0.4s;
-      text-shadow: 0 0 40px #00ffcc, 0 0 80px #fff;
+      text-shadow: 0 0 40px white, 0 0 80px #fff;
     }
     #special-letter.show {
       opacity: 1;
@@ -134,18 +137,36 @@
     const drawnNumbers = [];
 
     let shownSpecials = { L: false, U: false, APAGÓN: false };
+    let lastDrawnCount = 0; // <-- Agrega esto
+
 
     const ws = new WebSocket(`ws://${location.host}`);
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
       if (msg.type === 'update') {
+        console.log(msg);
+        const prevCount = drawnNumbers.length;
         drawnNumbers.length = 0;
         msg.numbers.forEach(n => drawnNumbers.push(n));
         updateUI();
+
+        console.log("1",drawnNumbers.length, "2",prevCount);  
+
+      // Mostrar animación solo si se agregó un nuevo número
+        if (drawnNumbers.length > prevCount && drawnNumbers.length > 0) {
+          const lastNumber = drawnNumbers[drawnNumbers.length - 1];
+          showSpecialLetter(lastNumber);
+        }
       }
+
       // Permitir mostrar animación desde control
       if (msg.type === 'special' && msg.letter) {
         showSpecialLetter(msg.letter);
+      }
+      if (msg.type === 'delete') {
+        drawnNumbers.length = 0;
+        msg.numbers.forEach(n => drawnNumbers.push(n));
+        updateUI();
       }
     };
 
