@@ -247,7 +247,7 @@ function sendSpecial(letter) {
     // Reset y volver a agregar todos menos el último
     fetch('/reset', { method: 'POST' }).then(() => {
         updated.forEach(num => {
-        fetch('/number', {
+        fetch('/deleteNumber', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ number: num })

@@ -144,13 +144,13 @@
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
       if (msg.type === 'update') {
-        console.log(msg);
+        // console.log(msg);
         const prevCount = drawnNumbers.length;
         drawnNumbers.length = 0;
         msg.numbers.forEach(n => drawnNumbers.push(n));
         updateUI();
 
-        console.log("1",drawnNumbers.length, "2",prevCount);  
+        // console.log("1",drawnNumbers.length, "2",prevCount);  
 
       // Mostrar animación solo si se agregó un nuevo número
         if (drawnNumbers.length > prevCount && drawnNumbers.length > 0) {

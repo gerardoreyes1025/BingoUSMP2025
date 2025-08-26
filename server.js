@@ -71,5 +71,5 @@ const PORT = 3000;
 const HOST = '0.0.0.0'; // Esto lo hace accesible desde tu IP local
 
 server.listen(PORT, HOST, () => {
-  console.log(`Servidor corriendo en http://<TU_IP_LOCAL>:${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
