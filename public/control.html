@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Bingo - Control</title>
@@ -95,7 +96,7 @@
       cursor: pointer;
     }
 
-    .btnaccion{
+    .btnaccion {
       margin-top: 25px;
       font-size: 25px;
       padding: 8px 15px;
@@ -106,8 +107,19 @@
       cursor: pointer;
     }
 
+    .btnAnimacion{
+      margin-top: 25px;
+      font-size: 25px;
+      padding: 8px 15px;
+      background-color: green;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
+
 <body>
   <h1>Control de Bingo</h1>
 
@@ -116,17 +128,23 @@
     <button id="add-btn">Agregar</button>
     <button id="undo-btn">Deshacer último</button>
     <br>
-    
+
 
   </div>
 
   <div id="bingo-grid"></div>
-<button id="reset-btn">Resetear</button>
-</br>
+  <button id="reset-btn">Resetear</button>
+  </br>
 
-    <button id="btn-l" class="btnaccion" disabled>Animar L</button>
-<button id="btn-u" class="btnaccion" disabled>Animar U</button>
-<button id="btn-apagon" class="btnaccion" disabled>Animar Apagón</button>
+  <button id="btn-l" class="btnaccion" disabled>Animar L</button>
+  <button id="btn-u" class="btnaccion" disabled>Animar U</button>
+  <button id="btn-apagon" class="btnaccion" disabled>Animar Apagón</button>
+  <br>
+
+  <button id="btnAnimacion-l" class="btnAnimacion" disabled>Animación L</button>
+  <button id="btnAnimacion-u" class="btnAnimacion" disabled>Animación U</button>
+  <button id="btnAnimacion-apagon" class="btnAnimacion" disabled>Animación Apagón</button>
+
 
   <script>
     const input = document.getElementById("number-input");
@@ -152,22 +170,43 @@
       document.getElementById("btn-l").disabled = false;
       document.getElementById("btn-u").disabled = false;
       document.getElementById("btn-apagon").disabled = false;
+      document.getElementById("btnAnimacion-l").disabled = false;
+      document.getElementById("btnAnimacion-u").disabled = false;
+      document.getElementById("btnAnimacion-apagon").disabled = false;
     };
     document.getElementById("btn-l").onclick = () => sendSpecial('L');
-document.getElementById("btn-u").onclick = () => sendSpecial('U');
-document.getElementById("btn-apagon").onclick = () => sendSpecial('APAGÓN');
+    document.getElementById("btn-u").onclick = () => sendSpecial('U');
+    document.getElementById("btn-apagon").onclick = () => sendSpecial('APAGÓN');
 
-function sendSpecial(letter) {
-  if (ws.readyState === 1) { // 1 = OPEN
-      fetch('/special', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ letter: letter })
-      });
-  } else {
-    alert("WebSocket no está conectado.");
-  }
-}
+    
+    document.getElementById("btnAnimacion-l").onclick = () => sendAnimation('L');
+    document.getElementById("btnAnimacion-u").onclick = () => sendAnimation('U');
+    document.getElementById("btnAnimacion-apagon").onclick = () => sendAnimation('A');
+
+    
+    function sendAnimation(letter){
+      if (ws.readyState === 1) { // 1 = OPEN
+        fetch('/animation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ letter: letter })
+        });
+      } else {
+        alert("WebSocket no está conectado.");
+      }
+    }
+
+    function sendSpecial(letter) {
+      if (ws.readyState === 1) { // 1 = OPEN
+        fetch('/special', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ letter: letter })
+        });
+      } else {
+        alert("WebSocket no está conectado.");
+      }
+    }
 
     function updateUI() {
       gridContainer.innerHTML = '';
@@ -234,26 +273,26 @@ function sendSpecial(letter) {
     const undoBtn = document.getElementById("undo-btn");
 
     function undoLastNumber() {
-    if (drawnNumbers.size === 0) {
+      if (drawnNumbers.size === 0) {
         alert("No hay números para deshacer.");
         return;
-    }
+      }
 
-    const updated = Array.from(drawnNumbers);
-    const last = updated.pop(); // Quita el último
+      const updated = Array.from(drawnNumbers);
+      const last = updated.pop(); // Quita el último
 
-    if (!confirm(`¿Deshacer el número ${last}?`)) return;
+      if (!confirm(`¿Deshacer el número ${last}?`)) return;
 
-    // Reset y volver a agregar todos menos el último
-    fetch('/reset', { method: 'POST' }).then(() => {
+      // Reset y volver a agregar todos menos el último
+      fetch('/reset', { method: 'POST' }).then(() => {
         updated.forEach(num => {
-        fetch('/deleteNumber', {
+          fetch('/deleteNumber', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ number: num })
+          });
         });
-        });
-    });
+      });
     }
 
     undoBtn.addEventListener("click", undoLastNumber);
@@ -263,4 +302,5 @@ function sendSpecial(letter) {
     resetBtn.addEventListener("click", resetBingo);
   </script>
 </body>
+
 </html>

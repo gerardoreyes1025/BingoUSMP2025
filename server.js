@@ -36,6 +36,15 @@ app.post('/deleteNumber', (req, res) => {
   res.sendStatus(200);
 });
 
+app.post('/animation', (req, res) => {
+  const { letter } = req.body;
+  if (typeof letter !== 'string' || !['l', 'u', 'a'].includes(letter)) {
+    return res.status(400).json({ error: 'Letra especial inválida' });
+  }
+  broadcast({ type: 'animation', letter });
+  res.sendStatus(200);
+});
+
 app.post('/special', (req, res) => {
   const { letter } = req.body;
   // console.log("Letra especial recibida:", letter);
