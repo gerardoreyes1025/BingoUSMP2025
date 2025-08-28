@@ -4,13 +4,19 @@
   <meta charset="UTF-8">
   <title>Bingo - Overlay Horizontal</title>
   <style>
+
     body {
-      background-color: #111;
+      /* background-color: whitesmoke; */
       color: #fff;
       font-family: Arial, sans-serif;
       padding: 10px;
       margin: 0;
       overflow: hidden;
+
+
+      background-image: url(./img/FONDO-PARA-NÚMEROS-DEL-BINGO.png);
+      background-repeat: no-repeat;
+      background-size: cover;
     }
 
     #header {
@@ -20,15 +26,50 @@
       margin-bottom: 10px;
     }
 
+
+    #main-container {
+      /* display: flex; */
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      margin-top: 17%;
+      width: 100%;
+      display: flex;
+      position: relative; /*centrar respecto a grid*/
+    }
+
+    #box{
+      width: 58%;
+      padding-top: 45px;
+      padding-bottom: 45px;
+      margin-left: 10%;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+
+
+    }
+
+    #cuack{
+      position: absolute;
+      top: 0;
+      display: flex;
+      
+      /*margin-left: auto; */
+      /* float: right; */
+      margin-top: -100px;
+      /* pointer-events: none; Permite hacer clic a través del video */
+    }
+
     .letter {
-      font-size: 48px;
+      font-size: 80px;
       font-weight: bold;
       color: #444;
       transition: color 0.3s;
     }
 
     .active {
-      color: #00ffcc;
+      color: white;
+      text-shadow: 0 0 40px white, 0 0 80px #fff;
     }
 
     #last-numbers {
@@ -38,8 +79,8 @@
     }
 
     .last-number {
-      background-color: #00ffcc;
-      color: #000;
+      background-color: brown;
+      color: white;
       border-radius: 10px;
       padding: 10px;
       width: 60px;
@@ -49,52 +90,72 @@
       justify-content: center;
       font-weight: bold;
       font-size: 28px;
+      text-shadow: 0 0 40px white, 0 0 80px #fff;
     }
 
-        #bingo-grid {
+    #bingo-grid {
       display: grid;
       grid-template-columns: repeat(16, 40px);
-      grid-gap: 5px;
+      column-gap: 30px;
+      row-gap: 10px;
       justify-content: center;
-      margin-top: 30px;
+      /* margin-top: 40px; */
     }
 
     .cell {
-      width: 40px;
-      height: 40px;
+      
+      width: 60px;
+      height: 60px;
       background-color: #333;
       color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 4px;
-      font-size: 18px;
+      font-size: 25px;
     }
+
     .letter-cell {
         font-weight: bold;
         background-color: transparent;
-        color: #00ffcc;
+        color: gray;
+        margin-left: -15px;
+        font-size: 40px;
+        
     }
 
+    .letter-cell.active {
+        font-weight: bold;
+        background-color: transparent;
+        color: white;
+        text-shadow: 0 0 40px white, 0 0 80px #fff;
+    }
+
+
+
+
     .marked {
-      background-color: #ff4444;
+      background-color: brown;
       text-decoration: line-through;
     }
 
+    
+
     /* Animación para letras especiales */
     #special-letter {
-      position: fixed;
-      top: 40%;
-      left: 50%;
+      position: absolute; /*change to fixed*/
+      top: 50%;
+      left: 55%;
       transform: translate(-50%, -50%);
       font-size: 180px;
       font-weight: bold;
-      color: #00ffcc;
+      
+      color: white;
       opacity: 0;
       pointer-events: none;
       z-index: 1000;
       transition: opacity 0.4s;
-      text-shadow: 0 0 40px #00ffcc, 0 0 80px #fff;
+      text-shadow: 0 0 40px white, 0 0 80px #fff;
     }
     #special-letter.show {
       opacity: 1;
@@ -107,47 +168,101 @@
     }
     #special-letter.apagon {
       color: #fff;
-      background: #111;
+      /* background: #111; */
       border-radius: 30px;
+      font-size: 120px;
       padding: 40px 80px;
-      box-shadow: 0 0 80px #000;
-      text-shadow: 0 0 60px #fff, 0 0 120px #fff;
+      /* box-shadow: 0 0 80px #000; */
+      text-shadow: 0 0 30px #fff, 0 0 60px #fff;
     }
   </style>
 </head>
 
 <body>
+  <div id="main-container">
+    <div id="box">
+      <!-- <div id="header">
+        <div class="letter" id="b-letter">B</div>
+        <div class="letter" id="i-letter">I</div>
+        <div class="letter" id="n-letter">N</div>
+        <div class="letter" id="g-letter">G</div>
+        <div class="letter" id="o-letter">O</div>
+      </div> -->
 
-  <div id="header">
-    <div class="letter" id="b-letter">B</div>
-    <div class="letter" id="i-letter">I</div>
-    <div class="letter" id="n-letter">N</div>
-    <div class="letter" id="g-letter">G</div>
-    <div class="letter" id="o-letter">O</div>
-  </div>
+      <!-- <div id="last-numbers"></div> -->
 
-  <div id="last-numbers"></div>
+      <div id="bingo-grid"></div>
+      
+      <div id="special-letter"></div>
 
-  <div id="bingo-grid"></div>
-  <div id="special-letter"></div>
+
+
+    </div>
+
+
+        <!-- </div>
+        <div id="cuack">
+      <video width="35%" autoplay loop muted >
+        <source src="./img/ANIMACION EXPLICACION BINGO 2024.mp4" type="video/mp4">
+      </video>
+
+    </div> -->
+
+
+
+
 
   <script>
+
     const gridContainer = document.getElementById("bingo-grid");
     const drawnNumbers = [];
 
     let shownSpecials = { L: false, U: false, APAGÓN: false };
 
+    // const ws = new WebSocket(`ws://${location.host}`);
+    // ws.onmessage = (event) => {
+    //   const msg = JSON.parse(event.data);
+    //   if (msg.type === 'update') {
+    //     drawnNumbers.length = 0;
+    //     msg.numbers.forEach(n => drawnNumbers.push(n));
+    //     updateUI();
+    //   }
+    //   // Permitir mostrar animación desde control
+    //   if (msg.type === 'special' && msg.letter) {
+    //     showSpecialLetter(msg.letter);
+    //   }
+    // };
+
+    let lastDrawnCount = 0; // <-- Agrega esto
+
+
     const ws = new WebSocket(`ws://${location.host}`);
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
       if (msg.type === 'update') {
+        // console.log(msg);
+        const prevCount = drawnNumbers.length;
         drawnNumbers.length = 0;
         msg.numbers.forEach(n => drawnNumbers.push(n));
         updateUI();
+
+        // console.log("1",drawnNumbers.length, "2",prevCount);  
+
+      // Mostrar animación solo si se agregó un nuevo número
+        if (drawnNumbers.length > prevCount && drawnNumbers.length > 0) {
+          const lastNumber = drawnNumbers[drawnNumbers.length - 1];
+          showSpecialLetter(lastNumber);
+        }
       }
+
       // Permitir mostrar animación desde control
       if (msg.type === 'special' && msg.letter) {
         showSpecialLetter(msg.letter);
+      }
+      if (msg.type === 'delete') {
+        drawnNumbers.length = 0;
+        msg.numbers.forEach(n => drawnNumbers.push(n));
+        updateUI();
       }
     };
 
@@ -163,6 +278,7 @@
     }
 
     function updateUI() {
+
       // Actualizar letras BINGO
       const hasB = drawnNumbers.some(n => n >= 1 && n <= 15);
       const hasI = drawnNumbers.some(n => n >= 16 && n <= 30);
@@ -170,21 +286,22 @@
       const hasG = drawnNumbers.some(n => n >= 46 && n <= 60);
       const hasO = drawnNumbers.some(n => n >= 61 && n <= 75);
 
-      document.getElementById("b-letter").classList.toggle("active", hasB);
-      document.getElementById("i-letter").classList.toggle("active", hasI);
-      document.getElementById("n-letter").classList.toggle("active", hasN);
-      document.getElementById("g-letter").classList.toggle("active", hasG);
-      document.getElementById("o-letter").classList.toggle("active", hasO);
+      // document.getElementById("b-letter").classList.toggle("active", hasB);
+      // document.getElementById("i-letter").classList.toggle("active", hasI);
+      // document.getElementById("n-letter").classList.toggle("active", hasN);
+      // document.getElementById("g-letter").classList.toggle("active", hasG);
+      // document.getElementById("o-letter").classList.toggle("active", hasO);
 
-      // Últimos 5 números
-      const lastNumbersDiv = document.getElementById("last-numbers");
-      lastNumbersDiv.innerHTML = '';
-      drawnNumbers.slice(-5).reverse().forEach(num => {
-        const div = document.createElement("div");
-        div.className = "last-number";
-        div.textContent = num;
-        lastNumbersDiv.appendChild(div);
-      });
+      // // Últimos 5 números
+      // const lastNumbersDiv = document.getElementById("last-numbers");
+      // lastNumbersDiv.innerHTML = '';
+      // drawnNumbers.slice(-5).reverse().forEach(num => {
+      //   const div = document.createElement("div");
+      //   div.className = "last-number";
+      //   div.textContent = num;
+      //   lastNumbersDiv.appendChild(div);
+      // });
+
         // Grilla con letras y números
         gridContainer.innerHTML = '';
         const ranges = [
@@ -197,6 +314,7 @@
         for (const { label, start } of ranges) {
         // Agrega letra vertical
         const letterCell = document.createElement("div");
+        letterCell.setAttribute("id",label+"-letter-cell");
         letterCell.className = "cell letter-cell";
         letterCell.textContent = label;
         gridContainer.appendChild(letterCell);
@@ -210,6 +328,14 @@
             gridContainer.appendChild(cell);
             }
         }
+
+        
+      document.getElementById("B-letter-cell").classList.toggle("active", hasB);
+      document.getElementById("I-letter-cell").classList.toggle("active", hasI);
+      document.getElementById("N-letter-cell").classList.toggle("active", hasN);
+      document.getElementById("G-letter-cell").classList.toggle("active", hasG);
+      document.getElementById("O-letter-cell").classList.toggle("active", hasO);
+      
     //   // Grilla
     //   gridContainer.innerHTML = '';
     //   for (let i = 1; i <= 75; i++) {
@@ -219,6 +345,7 @@
     //     cell.textContent = i;
     //     gridContainer.appendChild(cell);
     //   }
+    
     // Detectar condiciones especiales
     const countB = drawnNumbers.filter(n => n >= 1 && n <= 15).length;
     const countI = drawnNumbers.filter(n => n >= 16 && n <= 30).length;
