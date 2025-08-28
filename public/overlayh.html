@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Bingo - Overlay Horizontal</title>
+  <style>
+
+    body {
+      /* background-color: whitesmoke; */
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      margin: 0;
+      overflow: hidden;
+
+
+      /* background-image: url(./img/FONDO-PARA-NÚMEROS-DEL-BINGO.png); */
+
+      /* background-image: url(./img/document_5010269682259723961.gif);
+      background-repeat: no-repeat;
+      background-size: cover; */
+    }
+    #background-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
+    
+    #header {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 10px;
+    }
+
+
+    #main-container {
+      /* display: flex; */
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      margin-top: 17%;
+      width: 100%;
+      display: flex;
+      position: relative; /*centrar respecto a grid*/
+    }
+
+    #boots-container {
+      /* display: flex; */
+      /* flex-direction: row; */
+      justify-content: center;
+      /* align-items: flex-start; */
+      margin-top: 15%;
+      /* width: 100%; */
+      /* display: flex; */
+      
+      position: relative;
+    }
+
+    #box{
+      width: 65%;
+      padding-top: 45px;
+      padding-bottom: 45px;
+      
+      /* margin-left: 10%; */
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+    }
+
+    #cuack{
+      justify-content: center;  
+      /* height: 10%; */
+      display: flex;
+      margin-top: 14%;
+      /* position: absolute; */
+      padding-right: 60px;
+    }
+
+    #cuack video {
+      height: 600px;
+      
+      object-fit: cover;
+      border-radius: 0;
+    }
+
+    .letter {
+      font-size: 80px;
+      font-weight: bold;
+      color: #444;
+      transition: color 0.3s;
+    }
+
+    .active {
+      color: white;
+      text-shadow: 0 0 40px white, 0 0 80px #fff;
+    }
+
+    #last-numbers {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .last-number {
+      background-color: brown;
+      color: white;
+      border-radius: 10px;
+      padding: 10px;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 28px;
+      text-shadow: 0 0 40px white, 0 0 80px #fff;
+    }
+
+    #bingo-grid {
+      display: grid;
+      grid-template-columns: repeat(16, 40px);
+      column-gap: 30px;
+      row-gap: 10px;
+      justify-content: center;
+      /* margin-top: 40px; */
+    }
+
+    .cell {
+      
+      width: 60px;
+      height: 60px;
+      background-color: whitesmoke;
+      color: gray;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-size: 25px;
+    }
+
+    .letter-cell {
+        font-weight: bold;
+        background-color: transparent;
+        color: gray;
+        margin-left: -15px;
+        font-size: 40px;
+        
+    }
+
+    .letter-cell.active {
+        font-weight: bold;
+        background-color: transparent;
+        color: #ffd824;
+        text-shadow: 0 0 40px #ffd824, 0 0 80px #ffd824;
+    }
+
+
+
+
+    .marked {
+      background-color: brown;
+      text-decoration: line-through;
+      color: white;
+      text-shadow: 0 0 40px white, 0 0 80px #fff;
+    }
+
+    
+
+    /* Animación para letras especiales */
+    #special-letter {
+      position: fixed; /*change to fixed*/
+      top: 45%;
+      left: 55%;
+      transform: translate(-50%, -50%);
+      font-size: 180px;
+      font-weight: bold;
+      
+      color: white;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1000;
+      transition: opacity 0.4s;
+
+      height: 24%;
+      width: 15%;
+      
+      
+      text-align: center;
+
+      box-shadow: 0 0 20px black, 0 0 40px black, 0 0 80px black ;
+      border-radius: 20px;
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+    #special-letter.show {
+      opacity: 1;
+      animation: pop 1s cubic-bezier(.2,2,.4,1) 1;
+    }
+    @keyframes pop {
+      0% { transform: translate(-50%, -50%) scale(0.7);}
+      60% { transform: translate(-50%, -50%) scale(1.2);}
+      100% { transform: translate(-50%, -50%) scale(1);}
+    }
+    #special-letter.apagon {
+      color: #fff;
+      /* background: #111; */
+      border-radius: 30px;
+      font-size: 120px;
+      padding: 40px 80px;
+      /* box-shadow: 0 0 80px #000; */
+      text-shadow: 0 0 30px #fff, 0 0 60px #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <div id="main-container">
+    <div id="box">
+
+      <div id="bingo-grid"></div>
+      <div id="special-letter"></div>
+
+    </div>
+    
+  </div> -->
+  <video autoplay muted loop playsinline id="background-video">
+    <source src="./img/FONDO MORADO PARA NUMERACIÓN BINGO 2025.mp4" type="video/mp4">
+    
+  </video>
+  <div class="container-fluid">
+    <div class="row">
+      
+      <div class="col-12 col-md-12 d-flex justify-content-center align-items-center" id="boots-container" >
+        <div id="box">
+          <div id="bingo-grid"></div>
+          <div id="special-letter"></div>
+        </div>
+      </div> 
+
+
+    </div>  
+  </div>
+
+
+  <script>
+
+    const gridContainer = document.getElementById("bingo-grid");
+    const drawnNumbers = [];
+
+    let shownSpecials = { L: false, U: false, APAGÓN: false };
+
+    // const ws = new WebSocket(`ws://${location.host}`);
+    // ws.onmessage = (event) => {
+    //   const msg = JSON.parse(event.data);
+    //   if (msg.type === 'update') {
+    //     drawnNumbers.length = 0;
+    //     msg.numbers.forEach(n => drawnNumbers.push(n));
+    //     updateUI();
+    //   }
+    //   // Permitir mostrar animación desde control
+    //   if (msg.type === 'special' && msg.letter) {
+    //     showSpecialLetter(msg.letter);
+    //   }
+    // };
+
+    let lastDrawnCount = 0; // <-- Agrega esto
+
+
+    const ws = new WebSocket(`ws://${location.host}`);
+    ws.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      if (msg.type === 'update') {
+        // console.log(msg);
+        const prevCount = drawnNumbers.length;
+        drawnNumbers.length = 0;
+        msg.numbers.forEach(n => drawnNumbers.push(n));
+        updateUI();
+
+        // console.log("1",drawnNumbers.length, "2",prevCount);  
+
+      // Mostrar animación solo si se agregó un nuevo número
+        if (drawnNumbers.length > prevCount && drawnNumbers.length > 0) {
+          const lastNumber = drawnNumbers[drawnNumbers.length - 1];
+          showSpecialLetter(lastNumber);
+        }
+      }
+
+      // Permitir mostrar animación desde control
+      if (msg.type === 'special' && msg.letter) {
+        showSpecialLetter(msg.letter);
+      }
+      if (msg.type === 'delete') {
+        drawnNumbers.length = 0;
+        msg.numbers.forEach(n => drawnNumbers.push(n));
+        updateUI();
+      }
+    };
+
+    function showSpecialLetter(letter) {
+      const specialDiv = document.getElementById("special-letter");
+      let apagon = (letter === "APAGÓN");
+      specialDiv.textContent = letter;
+      specialDiv.className = "show" + (apagon ? " apagon" : "");
+      setTimeout(() => {
+        specialDiv.className = apagon ? "apagon" : "";
+        specialDiv.textContent = "";
+      }, 1800);
+    }
+
+    function updateUI() {
+
+      // Actualizar letras BINGO
+      const hasB = drawnNumbers.some(n => n >= 1 && n <= 15);
+      const hasI = drawnNumbers.some(n => n >= 16 && n <= 30);
+      const hasN = drawnNumbers.some(n => n >= 31 && n <= 45);
+      const hasG = drawnNumbers.some(n => n >= 46 && n <= 60);
+      const hasO = drawnNumbers.some(n => n >= 61 && n <= 75);
+
+      // document.getElementById("b-letter").classList.toggle("active", hasB);
+      // document.getElementById("i-letter").classList.toggle("active", hasI);
+      // document.getElementById("n-letter").classList.toggle("active", hasN);
+      // document.getElementById("g-letter").classList.toggle("active", hasG);
+      // document.getElementById("o-letter").classList.toggle("active", hasO);
+
+      // // Últimos 5 números
+      // const lastNumbersDiv = document.getElementById("last-numbers");
+      // lastNumbersDiv.innerHTML = '';
+      // drawnNumbers.slice(-5).reverse().forEach(num => {
+      //   const div = document.createElement("div");
+      //   div.className = "last-number";
+      //   div.textContent = num;
+      //   lastNumbersDiv.appendChild(div);
+      // });
+
+        // Grilla con letras y números
+        gridContainer.innerHTML = '';
+        const ranges = [
+            { label: 'B', start: 1 },
+            { label: 'I', start: 16 },
+            { label: 'N', start: 31 },
+            { label: 'G', start: 46 },
+            { label: 'O', start: 61 },
+        ];
+        for (const { label, start } of ranges) {
+        // Agrega letra vertical
+        const letterCell = document.createElement("div");
+        letterCell.setAttribute("id",label+"-letter-cell");
+        letterCell.className = "cell letter-cell";
+        letterCell.textContent = label;
+        gridContainer.appendChild(letterCell);
+
+            // Agrega los 15 números de esa sección
+            for (let i = start; i < start + 15; i++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            if (drawnNumbers.includes(i)) cell.classList.add("marked");
+            cell.textContent = i;
+            gridContainer.appendChild(cell);
+            }
+        }
+
+        
+      document.getElementById("B-letter-cell").classList.toggle("active", hasB);
+      document.getElementById("I-letter-cell").classList.toggle("active", hasI);
+      document.getElementById("N-letter-cell").classList.toggle("active", hasN);
+      document.getElementById("G-letter-cell").classList.toggle("active", hasG);
+      document.getElementById("O-letter-cell").classList.toggle("active", hasO);
+      
+    //   // Grilla
+    //   gridContainer.innerHTML = '';
+    //   for (let i = 1; i <= 75; i++) {
+    //     const cell = document.createElement("div");
+    //     cell.className = "cell";
+    //     if (drawnNumbers.includes(i)) cell.classList.add("marked");
+    //     cell.textContent = i;
+    //     gridContainer.appendChild(cell);
+    //   }
+    
+    // Detectar condiciones especiales
+    const countB = drawnNumbers.filter(n => n >= 1 && n <= 15).length;
+    const countI = drawnNumbers.filter(n => n >= 16 && n <= 30).length;
+    const countN = drawnNumbers.filter(n => n >= 31 && n <= 45).length;
+    const countG = drawnNumbers.filter(n => n >= 46 && n <= 60).length;
+    const countO = drawnNumbers.filter(n => n >= 61 && n <= 75).length;
+
+    // L: 5B 1I 1N 1G 1O
+    if (countB >= 5 && countI >= 1 && countN >= 1 && countG >= 1 && countO >= 1 && !shownSpecials.L) {
+      showSpecialLetter("L");
+      shownSpecials.L = true;
+    }
+    // U: 5B 1I 1N 1G 5O
+    if (countB >= 5 && countI >= 1 && countN >= 1 && countG >= 1 && countO >= 5 && !shownSpecials.U) {
+      showSpecialLetter("U");
+      shownSpecials.U = true;
+    }
+    // Apagón: 5B 5I 4N 5G 5O
+    if (countB >= 5 && countI >= 5 && countN >= 4 && countG >= 5 && countO >= 5 && !shownSpecials["APAGÓN"]) {
+      showSpecialLetter("APAGÓN");
+      shownSpecials["APAGÓN"] = true;
+    }
+    // ...resto del código existente...
+  }
+  </script>
+
+</body>
+</html>

@@ -120,11 +120,10 @@
     }
 
     .cell {
-      
       width: 60px;
       height: 60px;
       background-color: whitesmoke;
-      color: white;
+      color: gray;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -144,8 +143,8 @@
     .letter-cell.active {
         font-weight: bold;
         background-color: transparent;
-        color: white;
-        text-shadow: 0 0 40px white, 0 0 80px #fff;
+        color: #ffd824;
+        text-shadow: 0 0 40px #ffd824, 0 0 80px #ffd824;
     }
 
 
@@ -154,6 +153,8 @@
     .marked {
       background-color: brown;
       text-decoration: line-through;
+      color: white;
+      text-shadow: 0 0 40px white, 0 0 80px #fff;
     }
 
     
@@ -166,14 +167,24 @@
       transform: translate(-50%, -50%);
       font-size: 180px;
       font-weight: bold;
+      height: 50%;
+      width: 20%;
+      align-content: center;
+      text-align: center;
       
       color: white;
       opacity: 0;
       pointer-events: none;
       z-index: 1000;
       transition: opacity 0.4s;
-      text-shadow: 0 0 40px white, 0 0 80px #fff;
+      
+
+
+      box-shadow: 0 0 20px black, 0 0 40px black, 0 0 80px black ;
+      border-radius: 20px;
+      background-color: rgba(0, 0, 0, 0.9);
     }
+
     #special-letter.show {
       opacity: 1;
       animation: pop 1s cubic-bezier(.2,2,.4,1) 1;
