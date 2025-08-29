@@ -38,7 +38,7 @@ app.post('/deleteNumber', (req, res) => {
 
 app.post('/animation', (req, res) => {
   const { letter } = req.body;
-  if (typeof letter !== 'string' || !['l', 'u', 'a'].includes(letter)) {
+  if (typeof letter !== 'string' || !['L', 'U', 'A'].includes(letter)) {
     return res.status(400).json({ error: 'Letra especial inválida' });
   }
   broadcast({ type: 'animation', letter });
