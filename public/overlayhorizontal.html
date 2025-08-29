@@ -55,7 +55,7 @@
       /* flex-direction: row; */
       justify-content: center;
       /* align-items: flex-start; */
-      margin-top: 5%;
+      margin-top: 10%;
       /* width: 100%; */
       /* display: flex; */
       padding-left: 3%;
@@ -78,11 +78,11 @@
       display: flex;
       margin-top: 10%;
       /* position: absolute; */
-      padding-right: 60px;
+      padding-right: 55px;
     }
 
     #cuack video {
-      height: 800px;
+      height: 600px;
 
       object-fit: cover;
       border-radius: 0;
@@ -124,15 +124,15 @@
     #bingo-grid {
       display: grid;
       grid-template-columns: repeat(16, 40px);
-      column-gap: 50px;
+      column-gap: 40px;
       row-gap: 20px;
       justify-content: center;
       /* margin-top: 40px; */
     }
 
     .cell {
-      width: 80px;
-      height: 80px;
+      width: 70px;
+      height: 70px;
       /* background-color: whitesmoke; */
       background-color: rgba(0, 0, 0, 0.5);
       /* color: gray; */
@@ -150,7 +150,7 @@
       background-color: transparent;
       color: gray;
       margin-left: -15px;
-      font-size: 65px;
+      font-size: 60px;
 
     }
 
@@ -161,9 +161,6 @@
       text-shadow: 0 0 40px #ffd824, 0 0 80px #ffd824;
     }
 
-
-
-
     .marked {
       background-color: brown;
       text-decoration: line-through;
@@ -172,12 +169,8 @@
       font-size: 50px;
     }
 
-
-
-    /* Animación para letras especiales */
     #special-letter {
       position: absolute;
-      /*change to fixed*/
       top: 50%;
       left: 55%;
       transform: translate(-50%, -50%);
@@ -187,14 +180,11 @@
       width: 20%;
       align-content: center;
       text-align: center;
-
       color: white;
       opacity: 0;
       pointer-events: none;
       z-index: 1000;
       transition: opacity 0.4s;
-
-
 
       box-shadow: 0 0 20px black, 0 0 40px black, 0 0 80px black;
       border-radius: 20px;
@@ -222,27 +212,15 @@
 
     #special-letter.apagon {
       color: #fff;
-      /* background: #111; */
       border-radius: 30px;
       font-size: 120px;
       padding: 40px 80px;
-      /* box-shadow: 0 0 80px #000; */
       text-shadow: 0 0 30px #fff, 0 0 60px #fff;
     }
   </style>
 </head>
 
 <body>
-  <!-- <div id="main-container">
-    <div id="box">
-
-      <div id="bingo-grid"></div>
-      <div id="special-letter"></div>
-
-    </div>
-    
-  </div> -->
-
   <div class="container-fluid">
     <div class="row">
       <div class="col-9 col-md-9 d-flex justify-content-center align-items-center" id="boots-container">
@@ -276,23 +254,8 @@
     const drawnNumbers = [];
 
     let shownSpecials = { L: false, U: false, APAGÓN: false };
-
-    // const ws = new WebSocket(`ws://${location.host}`);
-    // ws.onmessage = (event) => {
-    //   const msg = JSON.parse(event.data);
-    //   if (msg.type === 'update') {
-    //     drawnNumbers.length = 0;
-    //     msg.numbers.forEach(n => drawnNumbers.push(n));
-    //     updateUI();
-    //   }
-    //   // Permitir mostrar animación desde control
-    //   if (msg.type === 'special' && msg.letter) {
-    //     showSpecialLetter(msg.letter);
-    //   }
-    // };
-
+ 
     let lastDrawnCount = 0; // <-- Agrega esto
-
 
     const ws = new WebSocket(`ws://${location.host}`);
     ws.onmessage = (event) => {
