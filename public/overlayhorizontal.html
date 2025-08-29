@@ -45,15 +45,15 @@
       /* flex-direction: row; */
       justify-content: center;
       /* align-items: flex-start; */
-      margin-top: 13%;
+      margin-top: 5%;
       /* width: 100%; */
       /* display: flex; */
-      padding-left: 100px;
+      padding-left: 3%;
       position: relative;
     }
 
     #box {
-      width: 83%;
+      width: 100%;
       padding-top: 45px;
       padding-bottom: 45px;
 
@@ -66,13 +66,13 @@
       justify-content: center;
       /* height: 10%; */
       display: flex;
-      margin-top: 14%;
+      margin-top: 10%;
       /* position: absolute; */
       padding-right: 60px;
     }
 
     #cuack video {
-      height: 600px;
+      height: 800px;
 
       object-fit: cover;
       border-radius: 0;
@@ -114,22 +114,22 @@
     #bingo-grid {
       display: grid;
       grid-template-columns: repeat(16, 40px);
-      column-gap: 30px;
-      row-gap: 10px;
+      column-gap: 50px;
+      row-gap: 20px;
       justify-content: center;
       /* margin-top: 40px; */
     }
 
     .cell {
-      width: 60px;
-      height: 60px;
+      width: 80px;
+      height: 80px;
       background-color: whitesmoke;
       color: gray;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 4px;
-      font-size: 25px;
+      font-size: 40px;
     }
 
     .letter-cell {
@@ -137,7 +137,7 @@
       background-color: transparent;
       color: gray;
       margin-left: -15px;
-      font-size: 40px;
+      font-size: 60px;
 
     }
 
@@ -239,7 +239,7 @@
       </div>
       <div class="col-3 col-md-3 d-flex justify-content-center align-items-center" id="cuack">
         <video id="videoPlayer" autoplay muted loop>
-          <source src="./img/ANIMACION EXPLICACION BINGO 2024.mp4" type="video/mp4">
+          <source src="./img/L.mp4" type="video/mp4">
         </video>
       </div>
     </div>
@@ -252,9 +252,9 @@
 
     // Mapa letras a videos
     const letterVideos = {
-      'L': './img/ANIMACION EXPLICACION BINGO 2024.mp4',
-      'U': './img/letraU.mp4',
-      'A': './img/apagon.mp4',
+      'L': './img/L.mp4',
+      'U': './img/U.mp4',
+      'A': './img/A.mp4',
       // agrega las letras y videos que necesites
     };
 
