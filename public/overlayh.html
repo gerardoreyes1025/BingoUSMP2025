@@ -6,20 +6,22 @@
   <title>Bingo - Overlay Horizontal</title>
   <style>
 
+    @font-face {
+    font-family: "PoppinsBod";
+    src: url("./fonts/Poppins/Poppins-Bold.ttf");
+  }
+    @font-face {
+    font-family: "PoppinsExtraBold";
+    src: url("./fonts/Poppins/Poppins-ExtraBold.ttf");
+  }
+
     body {
-      /* background-color: whitesmoke; */
       color: #fff;
       font-family: Arial, sans-serif;
       padding: 10px;
       margin: 0;
       overflow: hidden;
 
-
-      /* background-image: url(./img/FONDO-PARA-NÚMEROS-DEL-BINGO.png); */
-
-      /* background-image: url(./img/document_5010269682259723961.gif);
-      background-repeat: no-repeat;
-      background-size: cover; */
     }
     #background-video {
       position: fixed;
@@ -30,7 +32,7 @@
       object-fit: cover;
       z-index: -1;
     }
-    
+
     #header {
       display: flex;
       justify-content: center;
@@ -55,25 +57,25 @@
       /* flex-direction: row; */
       justify-content: center;
       /* align-items: flex-start; */
-      margin-top: 15%;
+      margin-top: 10%;
       /* width: 100%; */
       /* display: flex; */
-      
+
       position: relative;
     }
 
     #box{
-      width: 65%;
+      width: 75%;
       padding-top: 45px;
       padding-bottom: 45px;
-      
+
       /* margin-left: 10%; */
       background: rgba(0, 0, 0, 0.3);
       border-radius: 20px;
     }
 
     #cuack{
-      justify-content: center;  
+      justify-content: center;
       /* height: 10%; */
       display: flex;
       margin-top: 14%;
@@ -83,7 +85,7 @@
 
     #cuack video {
       height: 600px;
-      
+
       object-fit: cover;
       border-radius: 0;
     }
@@ -124,52 +126,52 @@
     #bingo-grid {
       display: grid;
       grid-template-columns: repeat(16, 40px);
-      column-gap: 30px;
-      row-gap: 10px;
+      column-gap: 40px;
+      row-gap: 20px;
       justify-content: center;
       /* margin-top: 40px; */
     }
 
     .cell {
-      
-      width: 60px;
-      height: 60px;
-      background-color: whitesmoke;
-      color: gray;
+      width: 70px;
+      height: 70px;
+      /* background-color: whitesmoke; */
+      background-color: rgba(0, 0, 0, 0.5);
+      /* color: gray; */
+      color: rgba(128,128,128, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 4px;
-      font-size: 25px;
+      font-size: 40px;
+      font-family: "PoppinsExtraBold";
     }
 
     .letter-cell {
         font-weight: bold;
         background-color: transparent;
         color: gray;
-        margin-left: -15px;
-        font-size: 40px;
-        
+        margin-left: -20px;
+        font-size: 55px;
     }
 
     .letter-cell.active {
         font-weight: bold;
         background-color: transparent;
         color: #ffd824;
+        font-size: 60px;
         text-shadow: 0 0 40px #ffd824, 0 0 80px #ffd824;
     }
-
-
-
 
     .marked {
       background-color: brown;
       text-decoration: line-through;
       color: white;
       text-shadow: 0 0 40px white, 0 0 80px #fff;
+      font-size: 50px;
     }
 
-    
+
 
     /* Animación para letras especiales */
     #special-letter {
@@ -179,7 +181,7 @@
       transform: translate(-50%, -50%);
       font-size: 180px;
       font-weight: bold;
-      
+
       color: white;
       opacity: 0;
       pointer-events: none;
@@ -188,14 +190,15 @@
 
       height: 24%;
       width: 15%;
-      
-      
+
+
       text-align: center;
 
       box-shadow: 0 0 20px black, 0 0 40px black, 0 0 80px black ;
       border-radius: 20px;
       background-color: rgba(0, 0, 0, 0.9);
     }
+
     #special-letter.show {
       opacity: 1;
       animation: pop 1s cubic-bezier(.2,2,.4,1) 1;
@@ -228,24 +231,24 @@
       <div id="special-letter"></div>
 
     </div>
-    
+
   </div> -->
   <video autoplay muted loop playsinline id="background-video">
     <source src="./img/FONDO MORADO PARA NUMERACIÓN BINGO 2025.mp4" type="video/mp4">
-    
+
   </video>
   <div class="container-fluid">
     <div class="row">
-      
+
       <div class="col-12 col-md-12 d-flex justify-content-center align-items-center" id="boots-container" >
         <div id="box">
           <div id="bingo-grid"></div>
           <div id="special-letter"></div>
         </div>
-      </div> 
+      </div>
 
 
-    </div>  
+    </div>
   </div>
 
 
@@ -283,7 +286,7 @@
         msg.numbers.forEach(n => drawnNumbers.push(n));
         updateUI();
 
-        // console.log("1",drawnNumbers.length, "2",prevCount);  
+        // console.log("1",drawnNumbers.length, "2",prevCount);
 
       // Mostrar animación solo si se agregó un nuevo número
         if (drawnNumbers.length > prevCount && drawnNumbers.length > 0) {
@@ -366,13 +369,13 @@
             }
         }
 
-        
+
       document.getElementById("B-letter-cell").classList.toggle("active", hasB);
       document.getElementById("I-letter-cell").classList.toggle("active", hasI);
       document.getElementById("N-letter-cell").classList.toggle("active", hasN);
       document.getElementById("G-letter-cell").classList.toggle("active", hasG);
       document.getElementById("O-letter-cell").classList.toggle("active", hasO);
-      
+
     //   // Grilla
     //   gridContainer.innerHTML = '';
     //   for (let i = 1; i <= 75; i++) {
@@ -382,7 +385,7 @@
     //     cell.textContent = i;
     //     gridContainer.appendChild(cell);
     //   }
-    
+
     // Detectar condiciones especiales
     const countB = drawnNumbers.filter(n => n >= 1 && n <= 15).length;
     const countI = drawnNumbers.filter(n => n >= 16 && n <= 30).length;
