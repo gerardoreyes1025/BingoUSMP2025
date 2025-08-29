@@ -376,22 +376,11 @@
         }
       }
 
-
       document.getElementById("B-letter-cell").classList.toggle("active", hasB);
       document.getElementById("I-letter-cell").classList.toggle("active", hasI);
       document.getElementById("N-letter-cell").classList.toggle("active", hasN);
       document.getElementById("G-letter-cell").classList.toggle("active", hasG);
       document.getElementById("O-letter-cell").classList.toggle("active", hasO);
-
-      //   // Grilla
-      //   gridContainer.innerHTML = '';
-      //   for (let i = 1; i <= 75; i++) {
-      //     const cell = document.createElement("div");
-      //     cell.className = "cell";
-      //     if (drawnNumbers.includes(i)) cell.classList.add("marked");
-      //     cell.textContent = i;
-      //     gridContainer.appendChild(cell);
-      //   }
 
       // Detectar condiciones especiales
       const countB = drawnNumbers.filter(n => n >= 1 && n <= 15).length;
