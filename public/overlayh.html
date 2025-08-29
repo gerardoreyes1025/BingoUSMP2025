@@ -307,9 +307,22 @@
     };
 
     function showSpecialLetter(letter) {
+      var letra = '';
+      if (letter >= 1 && letter <= 15) {
+        letra = 'B';
+      } else if (letter >= 16 && letter <= 30) {
+        letra = 'I';
+      } else if (letter >= 31 && letter <= 45) {
+        letra = 'N';
+      } else if (letter >= 46 && letter <= 60) {
+        letra = 'G';
+      } else if (letter >= 61 && letter <= 75) {
+        letra = 'O';
+      }
+      console.log("Mostrando letra especial:", letter);
       const specialDiv = document.getElementById("special-letter");
       let apagon = (letter === "APAGÓN");
-      specialDiv.textContent = letter;
+      specialDiv.textContent = letra+" - "+letter;
       specialDiv.className = "show" + (apagon ? " apagon" : "");
       setTimeout(() => {
         specialDiv.className = apagon ? "apagon" : "";

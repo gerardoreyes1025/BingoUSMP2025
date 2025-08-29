@@ -174,18 +174,17 @@
       top: 50%;
       left: 55%;
       transform: translate(-50%, -50%);
-      font-size: 180px;
+      font-size: 200px;
       font-weight: bold;
-      height: 50%;
-      width: 20%;
+      height: 45%;
+      width: 40%;
       align-content: center;
       text-align: center;
       color: white;
       opacity: 0;
       pointer-events: none;
-      z-index: 1000;
+      z-index: 10000;
       transition: opacity 0.4s;
-
       box-shadow: 0 0 20px black, 0 0 40px black, 0 0 80px black;
       border-radius: 20px;
       background-color: rgba(0, 0, 0, 0.9);
@@ -214,7 +213,7 @@
       color: #fff;
       border-radius: 30px;
       font-size: 120px;
-      padding: 40px 80px;
+      padding: 40px 30px;
       text-shadow: 0 0 30px #fff, 0 0 60px #fff;
     }
   </style>
@@ -303,9 +302,21 @@
     }
 
     function showSpecialLetter(letter) {
+      var letra = '';
+      if (letter >= 1 && letter <= 15) {
+        letra = 'B - ';
+      } else if (letter >= 16 && letter <= 30) {
+        letra = 'I - ';
+      } else if (letter >= 31 && letter <= 45) {
+        letra = 'N - ';
+      } else if (letter >= 46 && letter <= 60) {
+        letra = 'G - ';
+      } else if (letter >= 61 && letter <= 75) {
+        letra = 'O - ';
+      }
       const specialDiv = document.getElementById("special-letter");
       let apagon = (letter === "APAGÓN");
-      specialDiv.textContent = letter;
+      specialDiv.textContent = letra+letter;
       specialDiv.className = "show" + (apagon ? " apagon" : "");
       setTimeout(() => {
         specialDiv.className = apagon ? "apagon" : "";
